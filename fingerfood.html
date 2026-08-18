@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חלבידו | תפריט פינגר-פוד בוטיק</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Assistant:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #d4af37;
+            --black: #000000;
+            --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 50%, #aa771c 100%);
+            --gold-glow: cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            min-height: 100%;
+            width: 100%;
+            background-color: var(--black);
+            font-family: 'Assistant', sans-serif;
+            color: #ffffff;
+            overflow-x: hidden; 
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .page-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .back-btn {
+            align-self: flex-start;
+            font-family: 'Assistant', sans-serif;
+            font-size: 14px;
+            color: var(--gold);
+            text-decoration: none;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: var(--gold-gradient);
+            color: var(--black);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            border-color: transparent;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .page-title {
+            font-family: 'Bellefair', serif;
+            font-size: clamp(45px, 6vw, 75px);
+            font-weight: 700;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            font-family: 'Assistant', sans-serif;
+            font-size: clamp(14px, 1.8vw, 18px);
+            font-weight: 300;
+            color: #b0b0b0;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1 / 1;
+            position: relative;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            border-radius: 24px;
+            overflow: hidden;
+            background-color: #050505;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+            transition: box-shadow 0.4s var(--gold-glow), border-color 0.4s ease;
+        }
+
+        .gallery-item:hover {
+            border-color: rgba(252, 246, 186, 1);
+            box-shadow: 0 0 35px rgba(212, 175, 55, 0.35);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.8;
+            /* הגדלה ב-35% במעבר עכבר (מ-1 ל-1.35) בשילוב עם חדות מירבית */
+            transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
+        }
+
+        .gallery-item:hover .item-image {
+            transform: scale(1.35);
+            opacity: 1;
+        }
+
+        .item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 25px 15px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 70%, transparent 100%);
+            text-align: center;
+            transform: translateY(15px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.4s ease;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .gallery-item:hover .item-overlay {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .item-name {
+            font-family: 'Bellefair', serif;
+            font-size: clamp(24px, 2.8vw, 32px);
+            color: #ffffff;
+            letter-spacing: 1px;
+            font-weight: 400;
+            transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .gallery-item:hover .item-name {
+            color: var(--gold);
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.95), 
+                         0 0 25px rgba(212, 175, 55, 0.7), 
+                         0 0 35px rgba(212, 175, 55, 0.4);
+            transform: scale(1.04);
+        }
+
+        .item-underline {
+            width: 70px;
+            height: 2px;
+            background: var(--gold);
+            margin: 12px auto 0;
+            transform: scaleX(0);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .gallery-item:hover .item-underline {
+            transform: scaleX(1);
+        }
+
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 20px;
+            }
+            .gallery-item {
+                border-radius: 20px;
+            }
+            .page-container { padding: 25px 15px; }
+            .page-header { margin-bottom: 30px; }
+            .item-name {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="page-container">
+        
+        <a href="index.html.html" class="back-btn">→ חזרה לדף הבית</a>
+
+        <div class="page-header">
+            <h1 class="page-title">פינגר-פוד</h1>
+            <p class="page-subtitle">חווית אירוח יוקרתית ומעוצבת</p>
+        </div>
+
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <div class="item-image" style="background-image: url('לחמניות ביס המוציא או מזונות.png');"></div>
+                <div class="item-overlay"><div class="item-name">לחמניות ביס מפוארות</div><div class="item-underline"></div></div>
+            </div>
+            <div class="gallery-item">
+                <div class="item-image" style="background-image: url('לחמניות שום.jpg');"></div>
+                <div class="item-overlay"><div class="item-name">לחמניות שום</div><div class="item-underline"></div></div>
+            </div>
+            <div class="gallery-item">
+                <div class="item-image" style="background-image: url('מיני פוקצ\'ות.png');"></div>
+                <div class="item-overlay"><div class="item-name">מיני פוקצ'ות</div><div class="item-underline"></div></div>
+            </div>
+            <div class="gallery-item">
+                <div class="item-image" style="background-image: url('ברוסקטה.png');"></div>
+                <div class="item-overlay"><div class="item-name">ברוסקטה חציל וגבינת פטה</div><div class="item-underline"></div></div>
+            </div>
+            <div class="gallery-item">
+                <div class="item-image" style="background-image: url('טורטיה במילוי גבינות.png');"></div>
+                <div class="item-overlay"><div class="item-name">טורטיה במילוי גבינות</div><div class="item-underline"></div></div>
+            </div>
+            <div class="gallery-item">
+                <div class="item-image" style="background-image: url('מיני קיש.png');"></div>
+                <div class="item-overlay"><div class="item-name">מיני קיש סלמון מעושן</div><div class="item-underline"></div></div>
+            </div>
+            <div class="gallery-item">
+                <div class="item-image" style="background-image: url('כדורי ארנצ\'יני.png');"></div>
+                <div class="item-overlay"><div class="item-name">כדורי ארנצ'יני</div><div class="item-underline"></div></div>
+            </div>
+            <div class="gallery-item">
+                <div class="item-image" style="background-image: url('סלט בוגול.png');"></div>
+                <div class="item-overlay"><div class="item-name">סלט בורגול ופיצוחים אישי</div><div class="item-underline"></div></div>
+            </div>
+            <div class="gallery-item">
+                <div class="item-image" style="background-image: url('סלט עגבניות שרי אישי.png');"></div>
+                <div class="item-overlay"><div class="item-name">סלט עגבניות שרי אישי</div><div class="item-underline"></div></div>
+            </div>
+            <div class="gallery-item">
+                <div class="item-image" style="background-image: url('סלט עדשים שחורות.png');"></div>
+                <div class="item-overlay"><div class="item-name">סלט עדשים שחורות וירקות</div><div class="item-underline"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        class Particle {
+            constructor() { this.init(); }
+            init() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 0.1; this.speedX = Math.random() * 0.4 - 0.2; this.speedY = Math.random() * 0.4 - 0.2; this.opacity = Math.random() * 0.5 + 0.1; }
+            update() { this.x += this.speedX; this.y += this.speedY; if (this.x < 0 || this.x > canvas.width) this.speedX *= -1; if (this.y < 0 || this.y > canvas.height) this.speedY *= -1; }
+            draw() { ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+        }
+        function createParticles() { particles = []; for (let i = 0; i < 100; i++) particles.push(new Particle()); }
+        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+        window.addEventListener('resize', resize); resize(); createParticles(); animate();
+    </script>
+</body>
+</html>

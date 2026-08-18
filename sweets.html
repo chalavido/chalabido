@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חלבידו | קולקציית מתוקים</title>
+    <!-- פונטים יוקרתיים מ-Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Assistant:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #d4af37;
+            --black: #050505;
+            --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 50%, #aa771c 100%);
+            --gold-glow: cubic-bezier(0.25, 0.8, 0.25, 1);
+            --card-bg: rgba(10, 10, 10, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100vh;
+            width: 100%;
+            background-color: var(--black);
+            font-family: 'Assistant', sans-serif;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .page-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1250px;
+            height: 100vh;
+            margin: 0 auto;
+            padding: 25px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .top-home-btn {
+            align-self: flex-start;
+            font-family: 'Assistant', sans-serif;
+            font-size: 14px;
+            color: var(--gold);
+            text-decoration: none;
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            padding: 10px 26px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .top-home-btn:hover {
+            background: var(--gold-gradient);
+            color: #000;
+            box-shadow: 0 0 20px var(--gold);
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        .page-header {
+            text-align: center;
+            margin: 5px 0 15px 0;
+        }
+
+        .page-title {
+            font-family: 'Bellefair', serif;
+            font-size: clamp(45px, 6vw, 75px);
+            font-weight: 700;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 3px;
+            line-height: 1.1;
+            margin-bottom: 6px;
+            text-shadow: 0 0 35px rgba(212, 175, 55, 0.25);
+        }
+
+        .page-subtitle {
+            font-family: 'Assistant', sans-serif;
+            font-size: clamp(14px, 1.8vw, 20px);
+            font-weight: 300;
+            color: #e5e5e5;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .tiles-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+            width: 100%;
+            max-width: 1150px;
+            padding: 0 10px;
+            margin: 0 auto;
+        }
+
+        .category-card {
+            height: 29vh;
+            max-height: 300px;
+            width: 100%;
+            position: relative;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            border-radius: 24px;
+            overflow: hidden;
+            cursor: pointer;
+            perspective: 1000px;
+            background-color: var(--card-bg);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 
+                    0 0 30px rgba(212, 175, 55, 0.1), 
+                    inset 0 0 20px rgba(212, 175, 55, 0.05);
+            transition: box-shadow 0.4s var(--gold-glow), border-color 0.4s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .category-card:hover {
+            border-color: rgba(252, 246, 186, 1);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8),
+                    0 0 50px rgba(212, 175, 55, 0.45), 
+                    inset 0 0 25px rgba(212, 175, 55, 0.15);
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            border-radius: 24px;
+        }
+
+        .card-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.7;
+            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.5)) brightness(1.1);
+            transition: opacity 0.5s ease, transform 0.8s ease, filter 0.5s ease;
+            border-radius: 24px;
+        }
+
+        .category-card:hover .card-image {
+            opacity: 0.95;
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(252, 246, 186, 0.8)) brightness(1.15);
+        }
+
+        .card-title {
+            position: relative;
+            z-index: 10;
+            padding-bottom: 25px;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 70%, transparent 100%);
+            text-align: center;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+        }
+
+        .card-title h2 {
+            font-family: 'Bellefair', serif;
+            font-size: clamp(28px, 3.5vw, 42px);
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            font-weight: 400;
+        }
+
+        .card-title .decoration {
+            width: 60px;
+            height: 1.5px;
+            background: var(--gold);
+            margin: 10px auto 0;
+            transform: scaleX(0);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .category-card:hover .decoration {
+            transform: scaleX(1);
+        }
+
+        .footer-tag {
+            font-size: 11px;
+            color: rgba(212, 175, 55, 0.35);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .tiles-wrapper {
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                max-width: 380px;
+                padding: 0 5px;
+            }
+            .category-card { 
+                border-radius: 18px;
+                height: 140px;
+            }
+            .card-inner, .card-image {
+                border-radius: 18px;
+            }
+            .card-title {
+                border-bottom-left-radius: 18px;
+                border-bottom-right-radius: 18px;
+                padding-bottom: 15px;
+            }
+            .card-title h2 {
+                font-size: 20px;
+            }
+            .page-container { padding: 15px 10px; }
+            .page-header { margin-bottom: 10px; }
+            .top-home-btn { padding: 7px 18px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="page-container">
+        
+        <a href="index.html.html" class="top-home-btn">→ חזרה לדף הבית</a>
+
+        <div class="page-header">
+            <h1 class="page-title">מתוקים</h1>
+            <p class="page-subtitle">יצירות קולינריות מעוצבות וממכרות</p>
+        </div>
+
+        <div class="tiles-wrapper">
+            
+            <!-- מעבר מקושר לעמוד העוגות -->
+            <a href="cakes.html" class="category-card js-tilt">
+                <div class="card-inner">
+                    <div class="card-image" style="background-image: url('עוגות.jpg');"></div>
+                    <div class="card-title">
+                        <h2>עוגות</h2>
+                        <div class="decoration"></div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- מעבר מקושר לעמוד הכוסיות -->
+            <a href="cups.html" class="category-card js-tilt">
+                <div class="card-inner">
+                    <div class="card-image" style="background-image: url('כוסיות.jpg');"></div>
+                    <div class="card-title">
+                        <h2>כוסיות</h2>
+                        <div class="decoration"></div>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- מעבר מקושר לעמוד הפטיפורים (pat.html) -->
+            <a href="pat.html" class="category-card js-tilt">
+                <div class="card-inner">
+                    <div class="card-image" style="background-image: url('פטיפורים.jpg');"></div>
+                    <div class="card-title">
+                        <h2>קולקציית פטיפורים יוקרתית</h2>
+                        <div class="decoration"></div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- מעבר מקושר לעמוד המגשים -->
+            <a href="trays.html" class="category-card js-tilt">
+                <div class="card-inner">
+                    <div class="card-image" style="background-image: url('מגשים.jpg');"></div>
+                    <div class="card-title">
+                        <h2>מגשים</h2>
+                        <div class="decoration"></div>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+
+        <div class="footer-tag">Boutique Dairy Pastry & Catering</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.init();
+            }
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.1;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function createParticles() {
+            particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        const cards = document.querySelectorAll('.js-tilt');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (centerY - y) / 16;
+                const rotateY = (x - centerX) / 16;
+                
+                card.querySelector('.card-inner').style.transform = 
+                    `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.025)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.querySelector('.card-inner').style.transform = 
+                    `rotateX(0deg) rotateY(0deg) scale(1)`;
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            resize();
+            createParticles();
+        });
+        resize();
+        createParticles();
+        animate();
+    </script>
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <link rel="icon" type="image/png" href="LOGO.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חלבידו | קולקציית פטיפורים יוקרתית</title>
+    <!-- פונטים יוקרתיים מ-Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --black: #050505;
+            --gold-gradient: linear-gradient(135deg, #aa820a 0%, #d4af37 50%, #f3e5ab 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--black);
+            font-family: 'Rubik', sans-serif;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 30px;
+            overflow-x: hidden;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .page-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .top-home-btn {
+            align-self: flex-start;
+            font-size: 14px;
+            color: var(--gold);
+            text-decoration: none;
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            padding: 10px 26px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .top-home-btn:hover {
+            background: var(--gold-gradient);
+            color: #000;
+            box-shadow: 0 0 25px var(--gold);
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Heebo', sans-serif;
+            font-size: clamp(38px, 5vw, 60px);
+            font-weight: 700;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            color: #ccc;
+            letter-spacing: 3px;
+        }
+
+        /* גלריית התמונות עם אפקט זוהר */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .image-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            background: rgba(15, 15, 15, 0.8);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.15);
+            transition: all 0.4s ease;
+            height: 320px;
+            cursor: pointer;
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.85;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.6)) brightness(1.1);
+            transition: all 0.5s ease;
+        }
+
+        .image-card:hover {
+            border-color: rgba(252, 246, 186, 1);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.9), 0 0 35px rgba(212, 175, 55, 0.6);
+            transform: translateY(-5px);
+        }
+
+        .image-card:hover img {
+            opacity: 1;
+            transform: scale(1.06);
+            filter: drop-shadow(0 0 25px rgba(252, 246, 186, 0.9)) brightness(1.2);
+        }
+
+        /* עיצוב כיתוב משופר עם רקע כהה אטום למניעת היבלעות בתמונות */
+        .card-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 25px 20px 18px 20px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.8) 70%, transparent 100%);
+            text-align: center;
+            font-family: 'Heebo', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,1);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9));
+        }
+
+        /* Lightbox Modal מעוצב */
+        .lightbox-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            padding: 30px;
+        }
+
+        .lightbox-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 850px;
+            width: 100%;
+            background: #141414;
+            border: 2px solid var(--gold);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.4);
+            transform: scale(0.85);
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .lightbox-modal.active .lightbox-content {
+            transform: scale(1);
+        }
+
+        .lightbox-image {
+            width: 100%;
+            height: 450px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .lightbox-details {
+            padding: 35px;
+            text-align: center;
+            background: #141414;
+        }
+
+        .lightbox-title {
+            font-family: 'Heebo', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .lightbox-text {
+            color: #b0b0b0;
+            font-size: 16px;
+            line-height: 1.6;
+            font-family: 'Rubik', sans-serif;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .lightbox-close:hover {
+            background: var(--gold);
+            color: #0b0b0b;
+            transform: rotate(90deg);
+        }
+
+        @media(max-width: 768px) {
+            .image-card { height: 260px; }
+            .lightbox-image { height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="page-container">
+        <a href="sweets.html" class="top-home-btn">← חזרה לעמוד המתוקים</a>
+
+        <div class="page-header">
+            <h1 class="page-title">קולקציית פטיפורים יוקרתית</h1>
+            <p class="page-subtitle">חגיגה של טעמים ועיצובים מרהיבים</p>
+        </div>
+
+        <div class="gallery-grid">
+            <!-- תמונה ראשונה -->
+            <div class="image-card" onclick="openLightbox('IMG_5006.JPG', 'פטיפורי שף מעוצבים', 'מבחר פטיפורי שף יוקרתיים בעיצובים מרשימים ובטעמים עשירים.')">
+                <img src="IMG_5006.JPG" alt="פטיפורים יוקרתיים 1">
+                <div class="card-caption">פטיפורי שף מעוצבים</div>
+            </div>
+
+            <!-- תמונה שנייה -->
+            <div class="image-card" onclick="openLightbox('תמונה9.JPG', 'כיפות שוקולד וזהב', 'כיפות שוקולד בלגי מעודנות בגימור עלי זהב אכילים.')">
+                <img src="תמונה9.JPG" alt="פטיפורים יוקרתיים 2">
+                <div class="card-caption">כיפות שוקולד וזהב</div>
+            </div>
+
+            <!-- תמונה שלישית -->
+            <div class="image-card" onclick="openLightbox('תמונה10.JPG', 'מבחר פטיפורים בגימור מוזהב', 'מארז פטיפורים מוקפד המותאם לאירועים יוקרתיים ולאירוח מושלם.')">
+                <img src="תמונה10.JPG" alt="פטיפורים יוקרתיים 3">
+                <div class="card-caption">מבחר פטיפורים בגימור מוזהב</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox-modal" id="lightbox" onclick="closeLightbox(event)">
+        <div class="lightbox-content" onclick="event.stopPropagation()">
+            <div class="lightbox-close" onclick="closeLightboxManual()">✕</div>
+            <div class="lightbox-image" id="lightbox-img"></div>
+            <div class="lightbox-details">
+                <h3 class="lightbox-title" id="lightbox-title"></h3>
+                <p class="lightbox-text" id="lightbox-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // רקע חלקיקים נוצצים
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.init();
+            }
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.1;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function createParticles() {
+            particles = [];
+            for (let i = 0; i < 80; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            resize();
+            createParticles();
+        });
+        resize();
+        createParticles();
+        animate();
+
+        // פונקציות לתצוגת ה-Lightbox
+        function openLightbox(imgUrl, title, desc) {
+            const modal = document.getElementById('lightbox');
+            document.getElementById('lightbox-img').style.backgroundImage = `url('${imgUrl}')`;
+            document.getElementById('lightbox-title').innerText = title;
+            document.getElementById('lightbox-text').innerText = desc;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightboxManual() {
+            const modal = document.getElementById('lightbox');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeLightbox(e) {
+            if (e.target.id === 'lightbox') {
+                closeLightboxManual();
+            }
+        }
+    </script>
+
+</body>
+</html>

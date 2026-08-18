@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+        <link rel="icon" type="image/png" href="LOGO.png">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>צור קשר | חלבידו</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Assistant:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #d4af37; --gold-dark: #aa771c; --black: #000000; }
+        body, html { height: 100%; margin: 0; background: var(--black); color: #fff; font-family: 'Assistant', sans-serif; overflow: hidden; }
+        #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        
+        .contact-wrapper { position: relative; z-index: 2; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .contact-box { width: 90%; max-width: 550px; padding: 60px; background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 40px; text-align: center; position: relative; overflow: hidden; }
+        
+        h1 { font-family: 'Bellefair', serif; font-size: 42px; color: var(--gold); margin-bottom: 30px; }
+        .input-group { margin-bottom: 20px; position: relative; }
+        
+        input, textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #444; padding: 18px; color: white; border-radius: 15px; box-sizing: border-box; outline: none; transition: 0.3s; font-size: 16px; }
+        input:focus, textarea:focus { border-color: var(--gold); background: rgba(0,0,0,0.5); }
+        
+        button { 
+            width: 100%; padding: 18px; border: none; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); 
+            color: black; border-radius: 15px; cursor: pointer; font-weight: 600; font-size: 18px; 
+            transition: all 0.4s ease; text-transform: uppercase; letter-spacing: 1px;
+            animation: buttonPulse 2s infinite;
+        }
+        button:hover { transform: scale(1.03); box-shadow: 0 0 25px var(--gold); }
+        
+        @keyframes buttonPulse { 0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); } }
+        
+        /* הודעת תודה */
+        #thank-you-msg { display: none; padding: 20px; text-align: center; animation: fadeIn 1s ease; }
+        .success-icon { width: 90px; height: 90px; border: 3px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .checkmark { color: var(--gold); font-size: 45px; }
+        .thank-you-text { font-family: 'Bellefair', serif; color: var(--gold); font-size: 32px; }
+        
+        /* כפתור חזרה לדף הבית - חיצוני */
+        .home-btn { 
+            display: none; /* מופיע רק אחרי שליחה */
+            margin-top: 30px; padding: 15px 40px; 
+            border: 1px solid var(--gold); color: var(--gold); border-radius: 15px; 
+            text-decoration: none; transition: all 0.4s ease; font-weight: 600; font-size: 18px;
+            background: rgba(212, 175, 55, 0.05);
+        }
+        .home-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 20px var(--gold); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        /* הגדרות חדשות עבור כפתור החזרה העליון - ללא שינוי שורות קוד קודמות */
+        .top-home-btn {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            z-index: 100;
+            color: var(--gold);
+            text-decoration: none;
+            padding: 10px 25px;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .top-home-btn:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 15px var(--gold);
+            border-color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- כפתור חזרה לדף הבית בחלק העליון -->
+    <a href="index.html.html" class="top-home-btn">חזרה לדף הבית</a>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="contact-wrapper">
+        <div class="contact-box" id="form-container">
+            <div id="form-content">
+                <h1>יצירת קשר</h1>
+                <form id="contact-form" action="https://formspree.io/f/xeebadgj" method="POST">
+                    <div class="input-group">
+                        <input type="text" name="name" placeholder="שם מלא" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" name="email" placeholder="אימייל" required>
+                    </div>
+                    <div class="input-group">
+                        <textarea name="message" rows="5" placeholder="איך נוכל לעזור?" required></textarea>
+                    </div>
+                    <button type="submit">שליחת פנייה</button>
+                </form>
+            </div>
+
+            <div id="thank-you-msg">
+                <div class="success-icon"><span class="checkmark">✓</span></div>
+                <div class="thank-you-text">ההודעה נשלחה בהצלחה!</div>
+                <p style="color: #fff; margin-top: 15px;">נחזור אליך בהקדם</p>
+            </div>
+        </div>
+        
+        <a href="index.html" id="home-btn" class="home-btn">חזרה לדף הבית</a>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        
+        class Particle {
+            constructor() { this.init(); }
+            init() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 1.5; this.speedX = Math.random() * 0.2 - 0.1; this.speedY = Math.random() * 0.2 - 0.1; }
+            update() { this.x += this.speedX; this.y += this.speedY; if(this.x<0 || this.x>canvas.width) this.speedX*=-1; if(this.y<0 || this.y>canvas.height) this.speedY*=-1; }
+            draw() { ctx.fillStyle = `rgba(212, 175, 55, 0.2)`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+        }
+        function animate() { ctx.clearRect(0,0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+        window.addEventListener('resize', resize); resize();
+        for(let i=0; i<60; i++) particles.push(new Particle());
+        animate();
+
+        const form = document.getElementById('contact-form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch(form.action, { method: 'POST', body: new FormData(form), headers: {'Accept': 'application/json'} })
+            .then(() => {
+                document.getElementById('form-content').style.display = 'none';
+                document.getElementById('thank-you-msg').style.display = 'block';
+                document.getElementById('home-btn').style.display = 'inline-block';
+            });
+        });
+    </script>
+</body>
+</html>

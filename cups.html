@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חלבידו | קולקציית כוסיות בוטיק</title>
+        <link rel="icon" type="image/png" href="LOGO.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Heebo:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --luxury-gold: #c5a059;
+            --luxury-gold-light: #e6cb8b;
+            --bg-deep: #080808;
+            --card-surface: #111111;
+            --text-primary: #f2f2f2;
+            --text-secondary: #999999;
+            --border-gold: rgba(197, 160, 89, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            min-height: 100%;
+            width: 100%;
+            background-color: var(--bg-deep);
+            font-family: 'Heebo', sans-serif;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .page-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .back-navigation {
+            align-self: flex-start;
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--luxury-gold);
+            text-decoration: none;
+            border: 1px solid var(--border-gold);
+            padding: 8px 24px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            background: rgba(17, 17, 17, 0.8);
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        .back-navigation:hover {
+            border-color: var(--luxury-gold-light);
+            background: rgba(197, 160, 89, 0.15);
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header-section h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(38px, 5vw, 56px);
+            font-weight: 600;
+            color: var(--luxury-gold);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(197, 160, 89, 0.2);
+        }
+
+        .header-section p {
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--text-secondary);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* גריד מלבני עם פינות עגולות וזוהר מודגש */
+        .rectangular-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 35px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .rect-card {
+            background-color: var(--card-surface);
+            border: 1px solid var(--border-gold);
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(197, 160, 89, 0.1);
+        }
+
+        .rect-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--luxury-gold-light);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(197, 160, 89, 0.35);
+        }
+
+        .rect-image-container {
+            width: 100%;
+            height: 260px;
+            position: relative;
+            background-color: #141414;
+            overflow: hidden;
+        }
+
+        /* שינוי מיקום התמונה והתאמתה לקצוות העגולים */
+        .rect-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%;
+            transition: transform 0.6s ease;
+        }
+
+        .rect-card:hover .rect-image-container img {
+            transform: scale(1.05);
+        }
+
+        .rect-content {
+            padding: 22px;
+            text-align: center;
+            background: var(--card-surface);
+        }
+
+        .rect-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .rect-subtitle {
+            font-size: 12px;
+            font-weight: 300;
+            color: var(--luxury-gold);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        /* מודאל תצוגה מוגדלת (Lightbox) עם זוהר */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            position: relative;
+            max-width: 750px;
+            width: 100%;
+            background: var(--card-surface);
+            border: 2px solid var(--luxury-gold);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 35px rgba(197, 160, 89, 0.3);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-img {
+            width: 100%;
+            height: 380px;
+            background-size: cover;
+            background-position: center 30%;
+        }
+
+        .modal-text {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .modal-text h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px;
+            color: var(--luxury-gold);
+            margin-bottom: 10px;
+        }
+
+        .modal-text p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(8, 8, 8, 0.8);
+            border: 1px solid var(--luxury-gold);
+            color: var(--luxury-gold);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: var(--luxury-gold);
+            color: var(--bg-deep);
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .rectangular-grid {
+                grid-template-columns: 1fr;
+            }
+            .modal-img {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-wrapper">
+        
+        <a href="sweets.html" class="back-navigation">← חזרה לעמוד המתוקים</a>
+
+        <div class="header-section">
+            <h1>קולקציית כוסיות בוטיק</h1>
+            <p>עיצוב מלבני יוקרתי ומואר</p>
+        </div>
+
+        <div class="rectangular-grid">
+            
+            <div class="rect-card" onclick="openModal('IMG_5806.jpg', 'כוסות מוס ורוד', 'קינוחי שכבות עדינים המוכנים בדייקנות ובאיכות גבוהה.')">
+                <div class="rect-image-container">
+                    <img src="IMG_5806.jpg" alt="כוסות מוס ורוד" onerror="this.src='https://via.placeholder.com/500x300/111111/c5a059?text=חלבידו'">
+                </div>
+                <div class="rect-content">
+                    <h3 class="rect-title">כוסות מוס ורוד</h3>
+                    <span class="rect-subtitle">צפייה בפרטים</span>
+                </div>
+            </div>
+
+            <div class="rect-card" onclick="openModal('IMG_7378.jpg', 'מבחר כוסיות לאירוח', 'מגוון עשיר של טעמים המותאמים לאירועים ברמה הגבוהה ביותר.')">
+                <div class="rect-image-container">
+                    <img src="IMG_7378.jpg" alt="מבחר כוסיות לאירוח" onerror="this.src='https://via.placeholder.com/500x300/111111/c5a059?text=חלבידו'">
+                </div>
+                <div class="rect-content">
+                    <h3 class="rect-title">מבחר כוסיות לאירוח</h3>
+                    <span class="rect-subtitle">צפייה בפרטים</span>
+                </div>
+            </div>
+
+            <div class="rect-card" onclick="openModal('IMG_4960.jpg', 'כוסיות בעיצוב אישי', 'שילוב מרתק של מרקמים ועיצובים ייחודיים.')">
+                <div class="rect-image-container">
+                    <img src="IMG_4960.jpg" alt="כוסיות בעיצוב אישי" onerror="this.src='https://via.placeholder.com/500x300/111111/c5a059?text=חלבידו'">
+                </div>
+                <div class="rect-content">
+                    <h3 class="rect-title">כוסיות בעיצוב אישי</h3>
+                    <span class="rect-subtitle">צפייה בפרטים</span>
+                </div>
+            </div>
+
+            <div class="rect-card" onclick="openModal('IMG_4964.jpg', 'מארז כוסיות מגוון', 'חוויה מושלמת המשלבת אסתטיקה וטעם עשיר.')">
+                <div class="rect-image-container">
+                    <img src="IMG_4964.jpg" alt="מארז כוסיות מגוון" onerror="this.src='https://via.placeholder.com/500x300/111111/c5a059?text=חלבידו'">
+                </div>
+                <div class="rect-content">
+                    <h3 class="rect-title">מארז כוסיות מגוון</h3>
+                    <span class="rect-subtitle">צפייה בפרטים</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- מודאל תצוגה מוגדלת -->
+    <div class="modal-overlay" id="luxuryModal" onclick="closeModalOutside(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-img" id="modalImage"></div>
+            <div class="modal-text">
+                <h3 id="modalTitle"></h3>
+                <p id="modalDesc"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(imgUrl, title, desc) {
+            const modal = document.getElementById('luxuryModal');
+            document.getElementById('modalImage').style.backgroundImage = `url('${imgUrl}')`;
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('luxuryModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeModalOutside(e) {
+            if (e.target.id === 'luxuryModal') {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
